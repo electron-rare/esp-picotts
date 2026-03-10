@@ -94,3 +94,51 @@ The partition sizes may be shrunk to better match the language you're using. Wha
 ## Examples
 
 The [boot\_greeting](examples/boot_greeting/README.md) example is written for ESP-BOX and uses this component to issue a greeting upon boot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- CHANTIER:AUDIT START -->
+## Audit & Execution Plan (2026-03-10)
+
+### Snapshot
+- Priority: `P2`
+- Tech profile: `cpp/cmake`
+- Workflows: `yes`
+- Tests: `yes`
+- Debt markers: `0`
+- Source files: `71`
+
+### Corrections Prioritaires
+- [ ] Ajouter smoke build CMake
+- [ ] Ajouter/fiabiliser les commandes de vérification automatiques.
+- [ ] Clore les points bloquants avant optimisation avancée.
+
+### Optimisation
+- [ ] Identifier le hotspot principal et mesurer avant/après.
+- [ ] Réduire la complexité des modules les plus touchés.
+
+### Mémoire chantier
+- Control plane: `/Users/electron/.codex/memories/electron_rare_chantier`
+- Repo card: `/Users/electron/.codex/memories/electron_rare_chantier/REPOS/esp-picotts.md`
+
+<!-- CHANTIER:AUDIT END -->

@@ -51,7 +51,7 @@ set_source_files_properties(
 
 # PicoTTS attempts to use exp() trickery which relies on a particular floating
 # point representation format, which seemingly does not hold on Xtensa. As
-# a workaround, we rename the picoos_quick_exp functin and provide our own
+# a workaround, we rename the picoos_quick_exp function and provide our own
 # wrapper back to standard math.h exp() instead.
 set_source_files_properties(
   "pico/lib/picoos.c"
@@ -84,13 +84,21 @@ elseif(CONFIG_PICOTTS_LANGUAGE_IT_IT)
   set(PICOTTS_SG_SRC "it-IT_cm0_sg.bin")
 endif()
 
-add_custom_command(OUTPUT ${PICOTTS_TA_BIN} COMMAND ${CMAKE_COMMAND} -E copy ${PICOTTS_LANG_DIR}/${PICOTTS_TA_SRC} ${PICOTTS_TA_BIN_PATH})
-add_custom_command(OUTPUT ${PICOTTS_SG_BIN} COMMAND ${CMAKE_COMMAND} -E copy ${PICOTTS_LANG_DIR}/${PICOTTS_SG_SRC} ${PICOTTS_SG_BIN_PATH})
+add_custom_command(
+  OUTPUT ${PICOTTS_TA_BIN_PATH}
+  COMMAND ${CMAKE_COMMAND} -E copy ${PICOTTS_LANG_DIR}/${PICOTTS_TA_SRC} ${PICOTTS_TA_BIN_PATH}
+  VERBATIM
+)
+add_custom_command(
+  OUTPUT ${PICOTTS_SG_BIN_PATH}
+  COMMAND ${CMAKE_COMMAND} -E copy ${PICOTTS_LANG_DIR}/${PICOTTS_SG_SRC} ${PICOTTS_SG_BIN_PATH}
+  VERBATIM
+)
 
 add_custom_target(picotts_ta_bin_gen DEPENDS ${PICOTTS_TA_BIN_PATH})
 add_custom_target(picotts_sg_bin_gen DEPENDS ${PICOTTS_SG_BIN_PATH})
 set_property(DIRECTORY "${COMPONENT_DIR}" APPEND PROPERTY
-  ADDITIONAL_CLEAN_FILES ${PICOTTS_TA_BIN} ${PICOTTS_SG_BIN})
+  ADDITIONAL_CLEAN_FILES ${PICOTTS_TA_BIN_PATH} ${PICOTTS_SG_BIN_PATH})
 
 if(${CONFIG_PICOTTS_RESOURCE_MODE_PARTITION})
   partition_table_get_partition_info(part_ta_size "--partition-name ${CONFIG_PICOTTS_TA_PARTITION}" "size")
@@ -98,14 +106,14 @@ if(${CONFIG_PICOTTS_RESOURCE_MODE_PARTITION})
   if ("${part_ta_size}" AND "${part_ta_offs}")
     esptool_py_flash_to_partition(flash "${CONFIG_PICOTTS_TA_PARTITION}" "${PICOTTS_TA_BIN_PATH}")
   else()
-    set(message "Failed to find ${CONFIG_PICOTTS_TA_PARTITION} in partition table")
+    message(FATAL_ERROR "Failed to find ${CONFIG_PICOTTS_TA_PARTITION} in partition table")
   endif()
   partition_table_get_partition_info(part_sg_size "--partition-name ${CONFIG_PICOTTS_SG_PARTITION}" "size")
   partition_table_get_partition_info(part_sg_offs "--partition-name ${CONFIG_PICOTTS_SG_PARTITION}" "offset")
   if ("${part_sg_size}" AND "${part_sg_offs}")
     esptool_py_flash_to_partition(flash "${CONFIG_PICOTTS_SG_PARTITION}" "${PICOTTS_SG_BIN_PATH}")
   else()
-    set(message "Failed to find ${CONFIG_PICOTTS_SG_PARTITION} in partition table")
+    message(FATAL_ERROR "Failed to find ${CONFIG_PICOTTS_SG_PARTITION} in partition table")
   endif()
   add_dependencies(${COMPONENT_LIB} picotts_ta_bin_gen picotts_sg_bin_gen)
 else()

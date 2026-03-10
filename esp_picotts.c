@@ -188,7 +188,10 @@ static void esp_pico_run(void *)
           status =
             pico_getData(picoEngine, outbuf, sizeof(outbuf), &bytes, &type);
           if (bytes > 0)
-            outputCb(outbuf, bytes/2);
+          {
+            if (outputCb)
+              outputCb(outbuf, bytes / 2);
+          }
         } while (status == PICO_STEP_BUSY);
         if (status != PICO_STEP_IDLE)
         {
@@ -205,11 +208,10 @@ static void esp_pico_run(void *)
     }
   }
   ESP_LOGI(tag, "Exiting task");
-  xSemaphoreGive(exitLock);
-  vTaskDelete(NULL);
-
   if (error && errorCb)
     errorCb();
+  xSemaphoreGive(exitLock);
+  vTaskDelete(NULL);
 }
 
 
@@ -357,6 +359,9 @@ bool picotts_init(unsigned prio, picotts_output_fn cb, int core)
 
 void picotts_add(const char *text, unsigned len)
 {
+  if (!textQ || !text || !len)
+    return;
+
   while(len--)
     xQueueSendToBack(textQ, text++, portMAX_DELAY);
 }

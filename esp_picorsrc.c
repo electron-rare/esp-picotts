@@ -20,18 +20,18 @@
 
 static uint16_t esp_pico_load_pi_u16(const char *raw, unsigned offs)
 {
-  uint16_t a = raw[offs];
-  uint16_t b = raw[offs+1];
+  uint16_t a = (uint8_t)raw[offs];
+  uint16_t b = (uint8_t)raw[offs+1];
   return (b << 8 | a);
 }
 
 static uint32_t esp_pico_load_pi_u32(const char *raw, unsigned offs)
 {
-  uint32_t a = raw[offs];
-  uint32_t b = raw[offs+1];
-  uint32_t c = raw[offs+2];
-  uint32_t d = raw[offs+3];
-  return (d << 24 || c << 16 | b << 8 | a);
+  uint32_t a = (uint8_t)raw[offs];
+  uint32_t b = (uint8_t)raw[offs+1];
+  uint32_t c = (uint8_t)raw[offs+2];
+  uint32_t d = (uint8_t)raw[offs+3];
+  return (d << 24) | (c << 16) | (b << 8) | a;
 }
 
 
